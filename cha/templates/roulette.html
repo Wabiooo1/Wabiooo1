@@ -1,0 +1,122 @@
+{% extends 'layout.html' %}
+
+{% block body_class %}roulette-page{% endblock %}
+
+{% block content %}
+<div class="roulette-container">
+
+    <div class="game-area">
+        <div class="roulette-wheel-container">
+            <div id="roulette-wheel">
+                <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+                    <title>Ruleta Europea - Solución Definitiva</title>
+                    <defs>
+                        <radialGradient id="woodGradient" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="#A0522D"/><stop offset="85%" stop-color="#8B4513"/><stop offset="100%" stop-color="#65341a"/></radialGradient>
+                        <radialGradient id="goldGradient" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="#FFFAD5"/><stop offset="40%" stop-color="#FFD700"/><stop offset="90%" stop-color="#B8860B"/><stop offset="100%" stop-color="#8B6914"/></radialGradient>
+                        <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceAlpha" stdDeviation="3"/><feOffset dx="3" dy="3" result="o"/><feComponentTransfer><feFuncA type="linear" slope="0.5"/></feComponentTransfer><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                        <radialGradient id="ballGradient" cx="0.3" cy="0.3" r="0.7"><stop offset="0%" stop-color="white" /><stop offset="100%" stop-color="#e0e0e0" /></radialGradient>
+                    </defs>
+                    <style>.num { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: white; text-anchor: middle; dominant-baseline: central; }</style>
+                    <g id="stator"><circle cx="250.0" cy="250.0" r="248" fill="url(#woodGradient)" stroke="#3a2414" stroke-width="4"/><circle cx="250.0" cy="250.0" r="190.0" fill="none" stroke="#CFA53A" stroke-width="4"/></g>
+                    <g id="rotor"><circle cx="250.0" cy="250.0" r="186.0" fill="#222" stroke="#000" stroke-width="1"/><path d="M 234.3109 65.6665 A 185.0000 185.0000 0 0 1 265.6891 65.6665 L 259.7527 135.4143 A 115.0000 115.0000 0 0 0 240.2473 135.4143 Z" fill="#0A9E1C" stroke="#CFA53A" stroke-width="1"/><path d="M 265.6891 65.6665 A 185.0000 185.0000 0 0 1 296.6159 70.9694 L 278.9775 138.7107 A 115.0000 115.0000 0 0 0 259.7527 135.4143 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 296.6159 70.9694 A 185.0000 185.0000 0 0 1 326.2017 81.4227 L 297.3686 145.2087 A 115.0000 115.0000 0 0 0 278.9775 138.7107 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 326.2017 81.4227 A 185.0000 185.0000 0 0 1 353.5953 96.7257 L 314.3971 154.7214 A 115.0000 115.0000 0 0 0 297.3686 145.2087 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 353.5953 96.7257 A 185.0000 185.0000 0 0 1 378.0087 116.4381 L 329.5730 166.9750 A 115.0000 115.0000 0 0 0 314.3971 154.7214 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 378.0087 116.4381 A 185.0000 185.0000 0 0 1 398.7395 139.9929 L 342.4597 181.6172 A 115.0000 115.0000 0 0 0 329.5730 166.9750 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 398.7395 139.9929 A 185.0000 185.0000 0 0 1 415.1913 166.7123 L 352.6865 198.2266 A 115.0000 115.0000 0 0 0 342.4597 181.6172 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 415.1913 166.7123 A 185.0000 185.0000 0 0 1 426.8908 195.8278 L 359.9592 216.3254 A 115.0000 115.0000 0 0 0 352.6865 198.2266 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 426.8908 195.8278 A 185.0000 185.0000 0 0 1 433.5016 226.5017 L 364.0686 235.3930 A 115.0000 115.0000 0 0 0 359.9592 216.3254 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 433.5016 226.5017 A 185.0000 185.0000 0 0 1 434.8333 257.8516 L 364.8964 254.8807 A 115.0000 115.0000 0 0 0 364.0686 235.3930 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 434.8333 257.8516 A 185.0000 185.0000 0 0 1 430.8477 288.9757 L 362.4189 274.2281 A 115.0000 115.0000 0 0 0 364.8964 254.8807 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 430.8477 288.9757 A 185.0000 185.0000 0 0 1 421.6595 318.9784 L 356.7072 292.8785 A 115.0000 115.0000 0 0 0 362.4189 274.2281 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 421.6595 318.9784 A 185.0000 185.0000 0 0 1 407.5329 346.9968 L 347.9259 310.2953 A 115.0000 115.0000 0 0 0 356.7072 292.8785 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 407.5329 346.9968 A 185.0000 185.0000 0 0 1 388.8744 372.2248 L 336.3273 325.9776 A 115.0000 115.0000 0 0 0 347.9259 310.2953 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 388.8744 372.2248 A 185.0000 185.0000 0 0 1 366.2207 393.9366 L 322.2453 339.4741 A 115.0000 115.0000 0 0 0 336.3273 325.9776 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 366.2207 393.9366 A 185.0000 185.0000 0 0 1 340.2236 411.5076 L 306.0849 350.3966 A 115.0000 115.0000 0 0 0 322.2453 339.4741 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 340.2236 411.5076 A 185.0000 185.0000 0 0 1 311.6309 424.4323 L 288.3111 358.4309 A 115.0000 115.0000 0 0 0 306.0849 350.3966 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 311.6309 424.4323 A 185.0000 185.0000 0 0 1 281.2652 432.3389 L 269.4351 363.3458 A 115.0000 115.0000 0 0 0 288.3111 358.4309 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 281.2652 432.3389 A 185.0000 185.0000 0 0 1 250.0000 435.0000 L 250.0000 365.0000 A 115.0000 115.0000 0 0 0 269.4351 363.3458 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 250.0000 435.0000 A 185.0000 185.0000 0 0 1 218.7348 432.3389 L 230.5649 363.3458 A 115.0000 115.0000 0 0 0 250.0000 365.0000 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 218.7348 432.3389 A 185.0000 185.0000 0 0 1 188.3691 424.4323 L 211.6889 358.4309 A 115.0000 115.0000 0 0 0 230.5649 363.3458 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 188.3691 424.4323 A 185.0000 185.0000 0 0 1 159.7764 411.5076 L 193.9151 350.3966 A 115.0000 115.0000 0 0 0 211.6889 358.4309 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 159.7764 411.5076 A 185.0000 185.0000 0 0 1 133.7793 393.9366 L 177.7547 339.4741 A 115.0000 115.0000 0 0 0 193.9151 350.3966 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 133.7793 393.9366 A 185.0000 185.0000 0 0 1 111.1256 372.2248 L 163.6727 325.9776 A 115.0000 115.0000 0 0 0 177.7547 339.4741 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 111.1256 372.2248 A 185.0000 185.0000 0 0 1 92.4671 346.9968 L 152.0741 310.2953 A 115.0000 115.0000 0 0 0 163.6727 325.9776 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 92.4671 346.9968 A 185.0000 185.0000 0 0 1 78.3405 318.9784 L 143.2928 292.8785 A 115.0000 115.0000 0 0 0 152.0741 310.2953 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 78.3405 318.9784 A 185.0000 185.0000 0 0 1 69.1523 288.9757 L 137.5811 274.2281 A 115.0000 115.0000 0 0 0 143.2928 292.8785 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 69.1523 288.9757 A 185.0000 185.0000 0 0 1 65.1667 257.8516 L 135.1036 254.8807 A 115.0000 115.0000 0 0 0 137.5811 274.2281 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 65.1667 257.8516 A 185.0000 185.0000 0 0 1 66.4984 226.5017 L 135.9314 235.3930 A 115.0000 115.0000 0 0 0 135.1036 254.8807 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 66.4984 226.5017 A 185.0000 185.0000 0 0 1 73.1092 195.8278 L 140.0408 216.3254 A 115.0000 115.0000 0 0 0 135.9314 235.3930 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 73.1092 195.8278 A 185.0000 185.0000 0 0 1 84.8087 166.7123 L 147.3135 198.2266 A 115.0000 115.0000 0 0 0 140.0408 216.3254 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 84.8087 166.7123 A 185.0000 185.0000 0 0 1 101.2605 139.9929 L 157.5403 181.6172 A 115.0000 115.0000 0 0 0 147.3135 198.2266 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 101.2605 139.9929 A 185.0000 185.0000 0 0 1 121.9913 116.4381 L 170.4270 166.9750 A 115.0000 115.0000 0 0 0 157.5403 181.6172 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 121.9913 116.4381 A 185.0000 185.0000 0 0 1 146.4047 96.7257 L 185.6029 154.7214 A 115.0000 115.0000 0 0 0 170.4270 166.9750 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 146.4047 96.7257 A 185.0000 185.0000 0 0 1 173.7983 81.4227 L 202.6314 145.2087 A 115.0000 115.0000 0 0 0 185.6029 154.7214 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/><path d="M 173.7983 81.4227 A 185.0000 185.0000 0 0 1 203.3841 70.9694 L 221.0225 138.7107 A 115.0000 115.0000 0 0 0 202.6314 145.2087 Z" fill="#D40000" stroke="#CFA53A" stroke-width="1"/><path d="M 203.3841 70.9694 A 185.0000 185.0000 0 0 1 234.3109 65.6665 L 240.2473 135.4143 A 115.0000 115.0000 0 0 0 221.0225 138.7107 Z" fill="#111111" stroke="#CFA53A" stroke-width="1"/>
+                        <g class="number-labels">
+                            <text class="num" x="250" y="100" transform="rotate(0, 250, 250)" data-value="0" data-angle="0">0</text>
+                            <text class="num" x="250" y="100" transform="rotate(9.73, 250, 250)" data-value="32" data-angle="9.73">32</text>
+                            <text class="num" x="250" y="100" transform="rotate(19.46, 250, 250)" data-value="15" data-angle="19.46">15</text>
+                            <text class="num" x="250" y="100" transform="rotate(29.19, 250, 250)" data-value="19" data-angle="29.19">19</text>
+                            <text class="num" x="250" y="100" transform="rotate(38.92, 250, 250)" data-value="4" data-angle="38.92">4</text>
+                            <text class="num" x="250" y="100" transform="rotate(48.65, 250, 250)" data-value="21" data-angle="48.65">21</text>
+                            <text class="num" x="250" y="100" transform="rotate(58.38, 250, 250)" data-value="2" data-angle="58.38">2</text>
+                            <text class="num" x="250" y="100" transform="rotate(68.11, 250, 250)" data-value="25" data-angle="68.11">25</text>
+                            <text class="num" x="250" y="100" transform="rotate(77.84, 250, 250)" data-value="17" data-angle="77.84">17</text>
+                            <text class="num" x="250" y="100" transform="rotate(87.57, 250, 250)" data-value="34" data-angle="87.57">34</text>
+                            <text class="num" x="250" y="100" transform="rotate(97.30, 250, 250)" data-value="6" data-angle="97.30">6</text>
+                            <text class="num" x="250" y="100" transform="rotate(107.03, 250, 250)" data-value="27" data-angle="107.03">27</text>
+                            <text class="num" x="250" y="100" transform="rotate(116.76, 250, 250)" data-value="13" data-angle="116.76">13</text>
+                            <text class="num" x="250" y="100" transform="rotate(126.49, 250, 250)" data-value="36" data-angle="126.49">36</text>
+                            <text class="num" x="250" y="100" transform="rotate(136.22, 250, 250)" data-value="11" data-angle="136.22">11</text>
+                            <text class="num" x="250" y="100" transform="rotate(145.95, 250, 250)" data-value="30" data-angle="145.95">30</text>
+                            <text class="num" x="250" y="100" transform="rotate(155.68, 250, 250)" data-value="8" data-angle="155.68">8</text>
+                            <text class="num" x="250" y="100" transform="rotate(165.41, 250, 250)" data-value="23" data-angle="165.41">23</text>
+                            <text class="num" x="250" y="100" transform="rotate(175.14, 250, 250)" data-value="10" data-angle="175.14">10</text>
+                            <text class="num" x="250" y="100" transform="rotate(184.86, 250, 250)" data-value="5" data-angle="184.86">5</text>
+                            <text class="num" x="250" y="100" transform="rotate(194.59, 250, 250)" data-value="24" data-angle="194.59">24</text>
+                            <text class="num" x="250" y="100" transform="rotate(204.32, 250, 250)" data-value="16" data-angle="204.32">16</text>
+                            <text class="num" x="250" y="100" transform="rotate(214.05, 250, 250)" data-value="33" data-angle="214.05">33</text>
+                            <text class="num" x="250" y="100" transform="rotate(223.78, 250, 250)" data-value="1" data-angle="223.78">1</text>
+                            <text class="num" x="250" y="100" transform="rotate(233.51, 250, 250)" data-value="20" data-angle="233.51">20</text>
+                            <text class="num" x="250" y="100" transform="rotate(243.24, 250, 250)" data-value="14" data-angle="243.24">14</text>
+                            <text class="num" x="250" y="100" transform="rotate(252.97, 250, 250)" data-value="31" data-angle="252.97">31</text>
+                            <text class="num" x="250" y="100" transform="rotate(262.70, 250, 250)" data-value="9" data-angle="262.70">9</text>
+                            <text class="num" x="250" y="100" transform="rotate(272.43, 250, 250)" data-value="22" data-angle="272.43">22</text>
+                            <text class="num" x="250" y="100" transform="rotate(282.16, 250, 250)" data-value="18" data-angle="282.16">18</text>
+                            <text class="num" x="250" y="100" transform="rotate(291.89, 250, 250)" data-value="29" data-angle="291.89">29</text>
+                            <text class="num" x="250" y="100" transform="rotate(301.62, 250, 250)" data-value="7" data-angle="301.62">7</text>
+                            <text class="num" x="250" y="100" transform="rotate(311.35, 250, 250)" data-value="28" data-angle="311.35">28</text>
+                            <text class="num" x="250" y="100" transform="rotate(321.08, 250, 250)" data-value="12" data-angle="321.08">12</text>
+                            <text class="num" x="250" y="100" transform="rotate(330.81, 250, 250)" data-value="35" data-angle="330.81">35</text>
+                            <text class="num" x="250" y="100" transform="rotate(340.54, 250, 250)" data-value="3" data-angle="340.54">3</text>
+                            <text class="num" x="250" y="100" transform="rotate(350.27, 250, 250)" data-value="26" data-angle="350.27">26</text>
+                        </g>
+                    </g>
+                    <g id="hub" filter="url(#drop-shadow)"><circle cx="250.0" cy="250.0" r="60" fill="url(#goldGradient)" stroke="#B8860B" stroke-width="3"/><circle cx="250.0" cy="250.0" r="36" fill="#2a1f17" stroke="#000" stroke-width="2"/><text x="250.0" y="254.0" class="num" font-size="12" fill="#FFD700">CASINO</text></g>
+                    <g id="ball-track"><circle id="ball" cx="250" cy="100" r="8" fill="url(#ballGradient)" /></g>
+                </svg>
+                <div class="roulette-result"></div>
+            </div>
+        </div>
+        <div class="message-area" id="roulette-message"></div>
+    </div>
+
+    <div class="betting-area">
+        <div class="roulette-controls">
+            <div class="chip-selection">
+                <span class="chip-label">Ficha:</span>
+                <button class="chip" data-value="1">$1</button>
+                <button class="chip" data-value="5">$5</button>
+                <button class="chip" data-value="10">$10</button>
+                <button class="chip" data-value="25">$25</button>
+                <button class="chip" data-value="100">$100</button>
+            </div>
+            <div class="total-bet-display">
+                Apuesta Total: <span id="total-bet">$0.00</span>
+            </div>
+            <div class="action-buttons">
+                <button id="clear-bets" class="btn alt">Limpiar</button>
+                <button id="spin-wheel" class="btn big">GIRAR</button>
+            </div>
+        </div>
+        <div class="roulette-table-container">
+            <div class="roulette-table">
+                <div class="bet-option zero" data-type="number" data-value="0">0</div>
+                <div class="numbers-grid"></div>
+                <div class="side-bets">
+                    <div class="bet-option" data-type="dozen" data-value="1">1st 12</div>
+                    <div class="bet-option" data-type="dozen" data-value="2">2nd 12</div>
+                    <div class="bet-option" data-type="dozen" data-value="3">3rd 12</div>
+                    <div class="bet-option" data-type="simple" data-value="1-18">1-18</div>
+                    <div class="bet-option" data-type="simple" data-value="even">PAR</div>
+                    <div class="bet-option red" data-type="color" data-value="red"></div>
+                    <div class="bet-option black" data-type="color" data-value="black"></div>
+                    <div class="bet-option" data-type="simple" data-value="odd">IMPAR</div>
+                    <div class="bet-option" data-type="simple" data-value="19-36">19-36</div>
+                </div>
+                 <div class="column-bets">
+                    <div class="bet-option" data-type="column" data-value="1">2-1</div>
+                    <div class="bet-option" data-type="column" data-value="2">2-1</div>
+                    <div class="bet-option" data-type="column" data-value="3">2-1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<audio id="chip-sound" src="{{ url_for('static', filename='audio/chip.wav') }}" preload="auto"></audio>
+<audio id="wheel-sound" src="{{ url_for('static', filename='audio/wheel.wav') }}" preload="auto"></audio>
+<audio id="win-sound" src="{{ url_for('static', filename='audio/win.wav') }}" preload="auto"></audio>
+<audio id="lose-sound" src="{{ url_for('static', filename='audio/lose.wav') }}" preload="auto"></audio>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/roulette.js') }}"></script>
+{% endblock %}

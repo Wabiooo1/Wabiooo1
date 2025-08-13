@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+  <defs>
+    <!-- Degradado negro -->
+    <linearGradient id="blackFade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111"/>
+      <stop offset="100%" stop-color="#000"/>
+    </linearGradient>
+
+    <!-- Dorado -->
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="50%" stop-color="#FFC000"/>
+      <stop offset="100%" stop-color="#B8860B"/>
+    </linearGradient>
+
+    <!-- Brillo -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Base del shoe -->
+  <rect x="20" y="30" width="160" height="40" rx="5" ry="5" fill="url(#blackFade)" stroke="url(#gold)" stroke-width="3"/>
+
+  <!-- Parte inclinada -->
+  <polygon points="180,30 200,20 200,60 180,70" fill="url(#blackFade)" stroke="url(#gold)" stroke-width="3"/>
+
+  <!-- Cartas asomando -->
+  <rect x="35" y="15" width="25" height="35" rx="3" ry="3" fill="white" stroke="#000" stroke-width="1.5"/>
+  <text x="47.5" y="35" font-size="14" font-family="serif" font-weight="bold" text-anchor="middle" alignment-baseline="middle">A♠</text>
+
+  <rect x="60" y="15" width="25" height="35" rx="3" ry="3" fill="white" stroke="#000" stroke-width="1.5"/>
+  <text x="72.5" y="35" font-size="14" font-family="serif" font-weight="bold" text-anchor="middle" alignment-baseline="middle">K♠</text>
+
+  <!-- Brillos decorativos -->
+  <circle cx="30" cy="35" r="2" fill="#fff" filter="url(#glow)"/>
+  <circle cx="170" cy="55" r="2" fill="#fff" filter="url(#glow)"/>
+</svg>

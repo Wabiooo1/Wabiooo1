@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+
+{% block body_class %}mines-page{% endblock %}
+
+{% block content %}
+<div class="mines-container">
+  <!-- Panel de Control Izquierdo -->
+  <div class="control-panel">
+    <div class="config-group">
+      <label>Número de Minas</label>
+      <div class="option-group" id="mines-options">
+        <button class="option-btn selected" data-mines="3">3</button>
+        <button class="option-btn" data-mines="5">5</button>
+        <button class="option-btn" data-mines="7">7</button>
+        <button class="option-btn" data-mines="10">10</button>
+        <!-- <button class="option-btn">Custom</button> -->
+      </div>
+    </div>
+
+    <div class="config-group">
+      <label>Tamaño de Cuadrícula</label>
+      <div class="option-group" id="grid-size-options">
+        <button class="option-btn" data-size="3">3x3</button>
+        <button class="option-btn selected" data-size="5">5x5</button>
+        <button class="option-btn" data-size="7">7x7</button>
+        <button class="option-btn" data-size="9">9x9</button>
+      </div>
+    </div>
+
+    <div class="bet-controls">
+      <div class="balance-display">
+        <span>Saldo Actual</span>
+        <strong>${{ '%.2f'|format(g.user['saldo']) }}</strong>
+      </div>
+      <div class="bet-input-group">
+        <label>Monto de Apuesta</label>
+        <div class="input-wrapper">
+          <button id="bet-down">-</button>
+          <input id="bet-amount" type="text" value="1.00">
+          <button id="bet-up">+</button>
+        </div>
+      </div>
+      <button id="bet-btn" class="bet-btn">Apostar</button>
+      <button id="cashout-btn" class="bet-btn cashout" style="display: none;">Retirar <span id="current-profit"></span></button>
+    </div>
+  </div>
+
+  <!-- Área de Juego Principal -->
+  <div class="main-game-area">
+    <div class="game-header">
+      <div class="game-title">
+        <h2>MINAS</h2>
+        <span>Casino Gold</span>
+      </div>
+      <div class="multiplier-bar" id="multiplier-bar">
+        <!-- Los multiplicadores se llenarán con JS -->
+      </div>
+    </div>
+    <div id="board" class="board">
+      <div class="board-overlay" id="board-overlay">PRESIONA APOSTAR PARA INICIAR</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/buscaminas.js') }}"></script>
+{% endblock %}
