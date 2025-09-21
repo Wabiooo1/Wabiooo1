@@ -1,0 +1,218 @@
+{% extends 'layout.html' %}
+{% block content %}
+<!-- Hero Principal -->
+<section class="hero-main">
+  <div class="hero-background-pattern"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🏆 Casino Premium</div>
+    <h1 class="hero-title">
+      Tu Destino Para el Juego 
+      <span class="gold-gradient">Premium</span>
+    </h1>
+    <p class="hero-subtitle">
+      Juegos clásicos, diseño moderno y pagos instantáneos. 
+      <br>La emoción del casino más elegante te espera.
+    </p>
+    
+    {% if session.get('user_id') %}
+    <div class="hero-actions-logged">
+      <a href="#games" class="btn big primary-glow">Jugar Ahora</a>
+      <a href="/perfil" class="btn big secondary-outline">
+        <span class="btn-icon">👤</span>
+        Mi Perfil
+      </a>
+    </div>
+    {% else %}
+    <div class="hero-actions-guest">
+      <a href="{{ url_for('register') }}" class="btn big primary-glow">Crear Cuenta</a>
+      <a href="#games" class="btn big secondary-outline">Ver Juegos</a>
+    </div>
+    {% endif %}
+  </div>
+  
+  <!-- Elementos decorativos -->
+  <div class="hero-decoration">
+    <div class="floating-card card-1">♠️</div>
+    <div class="floating-card card-2">♦️</div>
+    <div class="floating-card card-3">♣️</div>
+    <div class="floating-card card-4">♥️</div>
+  </div>
+</section>
+
+{% if session.get('user_id') %}
+<!-- Dashboard rápido para usuarios logueados -->
+<section class="quick-dashboard">
+  <div class="dashboard-header">
+    <h2>¡Bienvenido de nuevo, {{ session.get('username', 'Jugador') }}!</h2>
+    <p>Tu última sesión fue productiva. ¿Listo para más acción?</p>
+  </div>
+  <div class="quick-stats">
+    <div class="quick-stat-card balance-highlight">
+      <div class="stat-icon">💰</div>
+      <div class="stat-info">
+        <h3>Balance Actual</h3>
+        <p class="stat-value">${{ '%.2f'|format(user_balance if user_balance else 0) }}</p>
+      </div>
+      <a href="/recargar" class="quick-btn">Recargar</a>
+    </div>
+    <div class="quick-stat-card">
+      <div class="stat-icon">🎮</div>
+      <div class="stat-info">
+        <h3>Partidas Hoy</h3>
+        <p class="stat-value">{{ daily_games if daily_games else 0 }}</p>
+      </div>
+    </div>
+    <div class="quick-stat-card">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-info">
+        <h3>Victorias</h3>
+        <p class="stat-value">{{ wins_today if wins_today else 0 }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Características Premium -->
+<section class="features">
+  <div class="features-header">
+    <h2>¿Por qué elegir Casino Gold?</h2>
+    <p>La experiencia de casino más completa y segura</p>
+  </div>
+  
+  <div class="features-grid">
+    <div class="feature-card security">
+      <div class="feature-icon">🛡️</div>
+      <h3>100% Seguro</h3>
+      <p>Algoritmos certificados y encriptación de nivel bancario para proteger cada jugada.</p>
+      <div class="feature-badge">Verificado</div>
+    </div>
+    
+    <div class="feature-card payments">
+      <div class="feature-icon">⚡</div>
+      <h3>Pagos Instantáneos</h3>
+      <p>Retira tus ganancias al instante. Sin demoras, sin complicaciones, sin esperas.</p>
+      <div class="feature-badge">24/7</div>
+    </div>
+    
+    <div class="feature-card mobile">
+      <div class="feature-icon">📱</div>
+      <h3>Multi-Plataforma</h3>
+      <p>Juega desde cualquier dispositivo con la misma calidad premium y fluidez.</p>
+      <div class="feature-badge">Responsive</div>
+    </div>
+    
+    <div class="feature-card support">
+      <div class="feature-icon">🎧</div>
+      <h3>Soporte VIP</h3>
+      <p>Atención personalizada las 24 horas. Nuestro equipo está aquí para ayudarte.</p>
+      <div class="feature-badge">Premium</div>
+    </div>
+  </div>
+</section>
+
+<!-- Showcas de Juegos Mejorado -->
+<section id="games" class="games-showcase">
+  <div class="games-header">
+    <h2>Nuestros Juegos Estrella</h2>
+    <p>Cada juego ha sido diseñado para ofrecerte la máxima emoción</p>
+  </div>
+  
+  <div class="games-grid">
+    <div class="game-card featured">
+      <div class="game-badge">⭐ Popular</div>
+      <div class="game-image">
+        <img src="{{ url_for('static', filename='img/gem.svg') }}" alt="Gema Buscaminas">
+        <div class="game-overlay">
+          <div class="game-stats">
+            <span class="stat">💎 95% RTP</span>
+            <span class="stat">🎯 Habilidad</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-content">
+        <h3>Buscaminas Premium</h3>
+        <p>Revela las gemas ocultas y multiplica tus ganancias. Cada gema descubierta aumenta tu premio exponencialmente.</p>
+        <div class="game-footer">
+          <span class="min-bet">Min: $1.00</span>
+          <a href="/buscaminas" class="btn game-btn">Jugar Ahora</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="game-card">
+      <div class="game-badge">🔥 Clásico</div>
+      <div class="game-image">
+        <img src="{{ url_for('static', filename='img/chip.svg') }}" alt="Ficha Blackjack">
+        <div class="game-overlay">
+          <div class="game-stats">
+            <span class="stat">♠️ 99.5% RTP</span>
+            <span class="stat">🧠 Estrategia</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-content">
+        <h3>Blackjack Profesional</h3>
+        <p>El clásico juego de cartas reinventado. Usa tu estrategia para vencer al crupier y alcanzar el 21 perfecto.</p>
+        <div class="game-footer">
+          <span class="min-bet">Min: $2.00</span>
+          <a href="/blackjack" class="btn game-btn">Jugar Ahora</a>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- Testimonios y confianza -->
+<section class="trust-section">
+  <div class="trust-header">
+    <h2>Más de 10,000 jugadores confían en nosotros</h2>
+  </div>
+  <div class="trust-stats">
+    <div class="trust-stat">
+      <div class="trust-number">$2.5M+</div>
+      <div class="trust-label">Pagado en premios</div>
+    </div>
+    <div class="trust-stat">
+      <div class="trust-number">50K+</div>
+      <div class="trust-label">Partidas jugadas</div>
+    </div>
+    <div class="trust-stat">
+      <div class="trust-number">99.9%</div>
+      <div class="trust-label">Tiempo de actividad</div>
+    </div>
+    <div class="trust-stat">
+      <div class="trust-number">4.9★</div>
+      <div class="trust-label">Calificación promedio</div>
+    </div>
+  </div>
+</section>
+
+{% if not session.get('user_id') %}
+<!-- Call to Action Final -->
+<section class="final-cta">
+  <div class="cta-background">
+    <div class="cta-pattern"></div>
+  </div>
+  <div class="cta-content">
+    <div class="cta-icon">🎰</div>
+    <h2>¡Tu Mesa Te Está Esperando!</h2>
+    <p>Únete a Casino Gold y recibe un <strong>bono de bienvenida del 100%</strong> hasta $500. 
+       <br>Plus 50 giros gratis en tu juego favorito.</p>
+    <div class="cta-buttons">
+      <a href="{{ url_for('register') }}" class="btn big primary-glow">
+        <span class="btn-icon">🚀</span>
+        Crear Cuenta Gratis
+      </a>
+      <a href="{{ url_for('login') }}" class="btn big secondary-outline">
+        Ya tengo cuenta
+      </a>
+    </div>
+    <div class="cta-trust">
+      <span>✅ Sin depósito inicial</span>
+      <span>✅ Registro en 30 segundos</span>
+      <span>✅ Soporte 24/7</span>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

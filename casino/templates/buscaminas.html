@@ -1,0 +1,151 @@
+{% extends 'layout.html' %}
+
+{% block title %}Buscaminas - Casino Gold{% endblock %}
+
+{% block body_class %}mines-page{% endblock %}
+
+{% block content %}
+<div class="mines-container">
+  <!-- Panel de Control Izquierdo -->
+  <div class="control-panel">
+    <!-- Configuración del Juego -->
+    <div class="config-section">
+      <div class="config-group">
+        <label>Número de Minas</label>
+        <div class="option-group" id="mines-options">
+          <button class="option-btn" data-mines="1">1</button>
+          <button class="option-btn selected" data-mines="3">3</button>
+          <button class="option-btn" data-mines="5">5</button>
+          <button class="option-btn" data-mines="7">7</button>
+          <button class="option-btn" data-mines="10">10</button>
+          <button class="option-btn" data-mines="24">24</button>
+        </div>
+      </div>
+
+      <div class="config-group">
+        <label>Tamaño de Cuadrícula</label>
+        <div class="option-group" id="grid-size-options">
+          <button class="option-btn selected" data-size="5">5x5</button>
+        </div>
+        <div class="grid-info">
+          <span class="info-text">Gemas para encontrar: <span id="gems-count">22</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas en Vivo -->
+    <div class="stats-section">
+      <div class="stat-item">
+        <span class="stat-label">Gemas Encontradas</span>
+        <span class="stat-value" id="gems-found">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Multiplicador</span>
+        <span class="stat-value multiplier" id="current-multiplier">1.00x</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Ganancia Potencial</span>
+        <span class="stat-value profit" id="potential-profit">$0.00</span>
+      </div>
+    </div>
+
+    <!-- Controles de Apuesta -->
+    <div class="bet-controls">
+      {% if g.user %}
+      <div class="balance-display">
+        <span>Saldo Actual</span>
+        <strong id="user-balance">${{ '%.2f'|format(g.user['saldo']) }}</strong>
+      </div>
+      {% else %}
+      <div class="balance-display">
+        <span>Modo Demo</span>
+        <strong>$1000.00</strong>
+      </div>
+      {% endif %}
+      
+      <div class="bet-input-group">
+        <label>Monto de Apuesta</label>
+        <div class="input-wrapper">
+          <button id="bet-half" class="bet-modifier">1/2</button>
+          <button id="bet-down" class="bet-modifier">-</button>
+          <input id="bet-amount" type="number" value="1.00" min="0.01" step="0.01">
+          <button id="bet-up" class="bet-modifier">+</button>
+          <button id="bet-double" class="bet-modifier">2x</button>
+        </div>
+        <div class="quick-bets">
+          <button class="quick-bet" data-amount="1">$1</button>
+          <button class="quick-bet" data-amount="5">$5</button>
+          <button class="quick-bet" data-amount="10">$10</button>
+          <button class="quick-bet" data-amount="25">$25</button>
+        </div>
+      </div>
+
+      <div class="game-actions">
+        <button id="bet-btn" class="bet-btn primary">
+          <span class="btn-text">Apostar</span>
+          <span class="btn-amount">$1.00</span>
+        </button>
+        <button id="cashout-btn" class="bet-btn cashout" style="display: none;">
+          <span class="btn-text">Retirar</span>
+          <span class="btn-amount" id="cashout-amount">$0.00</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Área de Juego Principal -->
+  <div class="main-game-area">
+    <div class="game-header">
+      <div class="game-title">
+        <h2>MINAS</h2>
+        <span>Casino Gold</span>
+      </div>
+      
+      <!-- Barra de Multiplicadores -->
+      <div class="multiplier-display">
+        <div class="multiplier-track" id="multiplier-track">
+          <!-- Los multiplicadores se generarán dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Tablero de Juego -->
+    <div class="game-board-container">
+      <div id="board" class="board">
+        <div class="board-overlay" id="board-overlay">
+          <div class="overlay-content">
+            <div class="overlay-icon">💎</div>
+            <div class="overlay-text">PRESIONA APOSTAR PARA INICIAR</div>
+          </div>
+        </div>
+        <!-- Las celdas se generarán dinámicamente -->
+      </div>
+    </div>
+
+    <!-- Mensajes del Juego -->
+    <div class="game-messages" id="game-messages">
+      <div class="message-item">Selecciona el número de minas y haz tu apuesta para comenzar</div>
+    </div>
+  </div>
+</div>
+
+<!-- Sonidos del juego -->
+<audio id="sound-click" preload="auto">
+  <source src="{{ url_for('static', filename='audio/click.wav') }}" type="audio/wav">
+</audio>
+<audio id="sound-gem" preload="auto">
+  <source src="{{ url_for('static', filename='audio/gem.wav') }}" type="audio/wav">
+</audio>
+<audio id="sound-bomb" preload="auto">
+  <source src="{{ url_for('static', filename='audio/bomb.wav') }}" type="audio/wav">
+</audio>
+<audio id="sound-cashout" preload="auto">
+  <source src="{{ url_for('static', filename='audio/cashout.wav') }}" type="audio/wav">
+</audio>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/buscaminas.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mines.css') }}">
+{% endblock %}

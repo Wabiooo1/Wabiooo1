@@ -1,0 +1,499 @@
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, g
+import sqlite3, os, random
+from config import DB_PATH, SECRET_KEY
+from werkzeug.security import generate_password_hash, check_password_hash
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = SECRET_KEY
+
+def get_db_connection():
+    conn = getattr(g, '_database', None)
+    if conn is None:
+        conn = g._database = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+    return conn
+
+@app.teardown_appcontext
+def close_connection(exception):
+    conn = getattr(g, '_database', None)
+    if conn is not None:
+        conn.close()
+
+def init_db():
+    if not os.path.exists(DB_PATH):
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute('''CREATE TABLE users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE,
+            email TEXT UNIQUE,
+            password_hash TEXT,
+            saldo REAL DEFAULT 0.0,
+            fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        cur.execute('''CREATE TABLE game_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            juego TEXT,
+            resultado TEXT,
+            monto_apostado REAL,
+            fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )''')
+        conn.commit()
+        conn.close()
+
+with app.app_context():
+    init_db()
+
+@app.before_request
+def load_current_user():
+    g.user = None
+    uid = session.get('user_id')
+    if uid:
+        conn = get_db_connection()
+        g.user = conn.execute('SELECT * FROM users WHERE id = ?', (uid,)).fetchone()
+
+
+# --------------------
+# Rutas de UI (templates)
+# --------------------
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username','').strip()
+        email = request.form.get('email','').strip()
+        password = request.form.get('password','')
+        if not username or not email or not password:
+            flash('Completa todos los campos','error')
+            return redirect(url_for('register'))
+        ph = generate_password_hash(password)
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute('INSERT INTO users (username, email, password_hash, saldo) VALUES (?, ?, ?, ?)', (username, email, ph, 100.0))
+            conn.commit()
+            flash('Registro exitoso — saldo inicial: $100','success')
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash('Error: usuario o email ya existente','error')
+            return redirect(url_for('register'))
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username','').strip()
+        password = request.form.get('password','')
+        conn = get_db_connection()
+        cur = conn.cursor()
+        user = cur.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        if user and check_password_hash(user['password_hash'], password):
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            flash('Bienvenido, ' + user['username'],'success')
+            return redirect(url_for('index'))
+        flash('Usuario o contraseña incorrectos','error')
+        return redirect(url_for('login'))
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Sesión cerrada','info')
+    return redirect(url_for('index'))
+
+@app.route('/perfil')
+def perfil():
+    if not g.user:
+        flash('Debes iniciar sesión para ver tu perfil.', 'error')
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    history = conn.execute('SELECT * FROM game_history WHERE user_id = ? ORDER BY fecha DESC LIMIT 50', (g.user['id'],)).fetchall()
+    
+    # Calcular estadísticas para la plantilla
+    stats = {'total_games': 0, 'fav_game': 'N/A'}
+    all_history = conn.execute('SELECT juego FROM game_history WHERE user_id = ?', (g.user['id'],)).fetchall()
+    if all_history:
+        stats['total_games'] = len(all_history)
+        game_counts = {}
+        for record in all_history:
+            game_counts[record['juego']] = game_counts.get(record['juego'], 0) + 1
+        if game_counts:
+            stats['fav_game'] = max(game_counts, key=game_counts.get).capitalize()
+
+    return render_template('perfil.html', user=g.user, history=history, stats=stats)
+
+@app.route('/recargar', methods=['GET','POST'])
+def recargar():
+    if 'user_id' not in session:
+        flash('Debes iniciar sesión','error')
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        try:
+            monto = float(request.form.get('monto', '0'))
+            if monto <= 0:
+                flash('Monto inválido','error')
+                return redirect(url_for('recargar'))
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute('UPDATE users SET saldo = saldo + ? WHERE id = ?', (monto, session['user_id']))
+            conn.commit()
+            flash(f'Saldo recargado: ${monto:.2f}','success')
+            return redirect(url_for('perfil'))
+        except (ValueError, TypeError):
+            flash('Error al recargar','error')
+            return redirect(url_for('recargar'))
+    return render_template('recargar.html')
+
+@app.route('/buscaminas')
+def buscaminas_page():
+    return render_template('buscaminas.html')
+
+@app.route('/blackjack')
+def blackjack_page():
+    return render_template('blackjack.html')
+
+@app.route('/roulette')
+def roulette_page():
+    return render_template('roulette.html')
+
+@app.route('/slots')
+def slots_page():
+    return render_template('coming_soon.html', game_name="Tragamonedas")
+
+
+# --------------------
+# API: balance & roulette (existente)
+# --------------------
+@app.route('/api/get_balance')
+def api_get_balance():
+    if 'user_id' not in session:
+        return jsonify({'ok': False, 'msg': 'No autenticado'}), 401
+    conn = get_db_connection()
+    row = conn.execute('SELECT saldo FROM users WHERE id = ?', (session['user_id'],)).fetchone()
+    return jsonify({'ok': True, 'saldo': row['saldo']})
+
+@app.route('/api/settle', methods=['POST'])
+def api_settle():
+    # Mantengo, pero advertido en tu código: es inseguro. Preferible usar endpoints específicos.
+    if 'user_id' not in session:
+        return jsonify({'ok': False, 'msg': 'No autenticado'}), 401
+    data = request.json
+    juego = data.get('juego')
+    resultado = data.get('resultado')
+    monto = float(data.get('monto', 0))
+    uid = session['user_id']
+    payout = float(data.get('payout', 0))
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('UPDATE users SET saldo = saldo + ? WHERE id = ?', (payout, uid))
+    cur.execute('INSERT INTO game_history (user_id, juego, resultado, monto_apostado) VALUES (?, ?, ?, ?)', (uid, juego, resultado, monto))
+    conn.commit()
+    cur.execute('SELECT saldo FROM users WHERE id = ?', (uid,))
+    newbal = cur.fetchone()['saldo']
+    return jsonify({'ok': True, 'saldo': newbal})
+
+
+# --------------------
+# Roulette helper (mantengo tu implementación)
+# --------------------
+def calculate_roulette_payout(bets, winning_number):
+    payout = 0
+    RED_NUMBERS = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36}
+    COLUMN_1 = {1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34}
+    COLUMN_2 = {2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35}
+    COLUMN_3 = {3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36}
+
+    for bet in bets:
+        bet_type = bet.get('type')
+        bet_value = bet.get('value')
+        amount = float(bet.get('amount', 0))
+
+        if bet_type == 'number' and int(bet_value) == winning_number:
+            payout += amount * 36
+        elif bet_type == 'color':
+            is_red = winning_number in RED_NUMBERS
+            is_black = winning_number != 0 and not is_red
+            if (bet_value == 'red' and is_red) or (bet_value == 'black' and is_black):
+                payout += amount * 2
+        elif bet_type == 'dozen' and winning_number != 0:
+            if bet_value == '1' and 1 <= winning_number <= 12:
+                payout += amount * 3
+            elif bet_value == '2' and 13 <= winning_number <= 24:
+                payout += amount * 3
+            elif bet_value == '3' and 25 <= winning_number <= 36:
+                payout += amount * 3
+        elif bet_type == 'column' and winning_number != 0:
+            if bet_value == '1' and winning_number in COLUMN_1:
+                payout += amount * 3
+            elif bet_value == '2' and winning_number in COLUMN_2:
+                payout += amount * 3
+            elif bet_value == '3' and winning_number in COLUMN_3:
+                payout += amount * 3
+        elif bet_type == 'simple' and winning_number != 0:
+            if bet_value == '1-18' and 1 <= winning_number <= 18: payout += amount * 2
+            elif bet_value == '19-36' and 19 <= winning_number <= 36: payout += amount * 2
+            elif bet_value == 'even' and winning_number % 2 == 0: payout += amount * 2
+            elif bet_value == 'odd' and winning_number % 2 != 0: payout += amount * 2
+
+    return payout
+
+@app.route('/api/roulette/spin', methods=['POST'])
+def roulette_spin():
+    if not g.user:
+        return jsonify({'ok': False, 'msg': 'No autenticado'}), 401
+
+    data = request.json
+    bets = data.get('bets', [])
+    total_bet = sum(float(b.get('amount', 0)) for b in bets)
+
+    if total_bet <= 0:
+        return jsonify({'ok': False, 'msg': 'Apuesta inválida.'})
+    if g.user['saldo'] < total_bet:
+        return jsonify({'ok': False, 'msg': 'Saldo insuficiente.'})
+
+    winning_number = random.randint(0, 36)
+    payout = calculate_roulette_payout(bets, winning_number)
+    net_change = payout - total_bet
+
+    conn = get_db_connection()
+    conn.execute('UPDATE users SET saldo = saldo + ? WHERE id = ?', (net_change, g.user['id']))
+    conn.execute('INSERT INTO game_history (user_id, juego, resultado, monto_apostado) VALUES (?, ?, ?, ?)',
+                 (g.user['id'], 'roulette', f'Ganador: {winning_number}', total_bet))
+    conn.commit()
+
+    new_balance = conn.execute('SELECT saldo FROM users WHERE id = ?', (g.user['id'],)).fetchone()['saldo']
+
+    return jsonify({'ok': True, 'winning_number': winning_number, 'payout': payout, 'saldo': new_balance})
+
+
+# --------------------
+# Blackjack: server-side, compacto en session (cartas codificadas como strings)
+# --------------------
+def _make_deck_codes():
+    # Rango de ranks y suits (usamos códigos cortos para ahorrar espacio en session)
+    ranks = ['A'] + [str(i) for i in range(2, 11)] + ['J', 'Q', 'K']
+    suits = ['S', 'H', 'D', 'C']  # Spades, Hearts, Diamonds, Clubs
+    deck = [f"{r}{s}" for s in suits for r in ranks]
+    random.shuffle(deck)
+    return deck
+
+def _card_value(code):
+    # code ejemplos: 'AS', '10H', 'JC'
+    rank = code[:-1]
+    if rank in ('J','Q','K'):
+        return 10
+    if rank == 'A':
+        return 11
+    return int(rank)
+
+def _calculate_score_from_codes(hand_codes):
+    total = 0
+    aces = 0
+    for c in hand_codes:
+        if c == '??':  # hidden placeholder
+            continue
+        v = _card_value(c)
+        total += v
+        if c[:-1] == 'A':
+            aces += 1
+    while total > 21 and aces:
+        total -= 10
+        aces -= 1
+    return total
+
+def _finalize_blackjack_game(game):
+    """Recibe el diccionario game {deck, player_hand, dealer_hand, bet, game_over}
+       Juega por el dealer y calcula resultado y payout_return (cantidad a añadir al saldo).
+       Devuelve (result_dict, payout_return).
+    """
+    deck = game['deck']
+    player = game['player_hand']
+    dealer = game['dealer_hand']
+    bet = float(game.get('bet', 0))
+
+    player_score = _calculate_score_from_codes(player)
+    # Si el jugador ya está bust, no es necesario que el dealer saque cartas
+    if player_score > 21:
+        result = 'bust'
+        payout_return = 0.0
+        return {'result': result, 'player_score': player_score, 'dealer_score': _calculate_score_from_codes(dealer), 'dealer_hand': dealer}, payout_return
+
+    # Dealer revela y juega
+    dealer_score = _calculate_score_from_codes(dealer)
+    while dealer_score < 17:
+        if not deck:
+            deck = _make_deck_codes()
+        dealer.append(deck.pop())
+        dealer_score = _calculate_score_from_codes(dealer)
+
+    # Determinar resultado
+    result = ''
+    payout_return = 0.0
+    # Natural Blackjack check
+    player_natural = (len(player) == 2 and player_score == 21)
+    dealer_natural = (len(dealer) == 2 and dealer_score == 21)
+
+    if player_natural and not dealer_natural:
+        result = 'blackjack'
+        payout_return = bet * 2.5  # devuelve 2.5x (apuesta + 1.5x)
+    elif player_natural and dealer_natural:
+        result = 'push'
+        payout_return = bet
+    else:
+        if dealer_score > 21:
+            result = 'dealer_bust'
+            payout_return = bet * 2
+        else:
+            if player_score > dealer_score:
+                result = 'player_win'
+                payout_return = bet * 2
+            elif player_score == dealer_score:
+                result = 'push'
+                payout_return = bet
+            else:
+                result = 'dealer_win'
+                payout_return = 0.0
+
+    return ({'result': result, 'player_score': player_score, 'dealer_score': dealer_score, 'dealer_hand': dealer}, payout_return)
+
+
+@app.route('/api/blackjack/deal', methods=['POST'])
+def blackjack_deal():
+    if not g.user:
+        return jsonify({'ok': False, 'msg': 'No autenticado'}), 401
+
+    data = request.get_json() or {}
+    try:
+        bet_amount = float(data.get('bet', 0))
+    except Exception:
+        return jsonify({'ok': False, 'msg': 'Apuesta inválida.'})
+
+    if bet_amount <= 0:
+        return jsonify({'ok': False, 'msg': 'Apuesta inválida.'})
+    if g.user['saldo'] < bet_amount:
+        return jsonify({'ok': False, 'msg': 'Saldo insuficiente.'})
+
+    # Descontar apuesta ahora (se devuelve según resultado)
+    conn = get_db_connection()
+    conn.execute('UPDATE users SET saldo = saldo - ? WHERE id = ?', (bet_amount, g.user['id']))
+    conn.commit()
+    new_bal = conn.execute('SELECT saldo FROM users WHERE id = ?', (g.user['id'],)).fetchone()['saldo']
+
+    deck = _make_deck_codes()
+    player_hand = [deck.pop(), deck.pop()]
+    dealer_hand = [deck.pop(), deck.pop()]
+
+    session['blackjack_game'] = {
+        'deck': deck,
+        'player_hand': player_hand,
+        # ocultamos la segunda carta en la respuesta pero en session la guardamos completa
+        'dealer_hand': dealer_hand,
+        'bet': bet_amount,
+        'game_over': False
+    }
+    session.modified = True
+
+    player_score = _calculate_score_from_codes(player_hand)
+    # construir respuesta con segunda carta oculta
+    masked_dealer = [dealer_hand[0], '??']
+
+    # Si blackjack natural del jugador se resuelve automáticamente
+    if player_score == 21:
+        # finalizar
+        game = session.get('blackjack_game')
+        result_info, payout = _finalize_blackjack_game(game)
+        # aplicar payout al saldo
+        conn.execute('UPDATE users SET saldo = saldo + ? WHERE id = ?', (payout, g.user['id']))
+        conn.execute('INSERT INTO game_history (user_id, juego, resultado, monto_apostado) VALUES (?, ?, ?, ?)',
+                     (g.user['id'], 'blackjack', result_info['result'], bet_amount))
+        conn.commit()
+        session['blackjack_game']['game_over'] = True
+        session.modified = True
+        new_bal = conn.execute('SELECT saldo FROM users WHERE id = ?', (g.user['id'],)).fetchone()['saldo']
+        # responder con estado final (dealer_hand completa)
+        return jsonify({'ok': True, 'game_over': True, 'player_hand': player_hand, 'dealer_hand': result_info['dealer_hand'],
+                        'player_score': result_info['player_score'], 'dealer_score': result_info['dealer_score'], 'result': result_info['result'], 'saldo': new_bal})
+
+    return jsonify({'ok': True, 'game_over': False, 'player_hand': player_hand, 'dealer_hand': masked_dealer,
+                    'player_score': player_score, 'dealer_score': '?', 'saldo': new_bal})
+
+
+@app.route('/api/blackjack/hit', methods=['POST'])
+def blackjack_hit():
+    if not g.user or 'blackjack_game' not in session:
+        return jsonify({'ok': False, 'msg': 'Juego no encontrado'}), 400
+
+    game = session['blackjack_game']
+    if game.get('game_over'):
+        return jsonify({'ok': False, 'msg': 'La ronda ha terminado.'}), 400
+
+    if not game['deck']:
+        game['deck'] = _make_deck_codes()
+
+    # Dar carta al jugador
+    card = game['deck'].pop()
+    game['player_hand'].append(card)
+
+    # calcular estado
+    player_score = _calculate_score_from_codes(game['player_hand'])
+
+    # si bust -> finalizar la partida (dealer no necesita extra)
+    if player_score > 21:
+        result_info, payout = _finalize_blackjack_game(game)
+        game['game_over'] = True
+        # aplicar payout (payout normalmente 0 si bust)
+        conn = get_db_connection()
+        conn.execute('UPDATE users SET saldo = saldo + ? WHERE id = ?', (payout, g.user['id']))
+        conn.execute('INSERT INTO game_history (user_id, juego, resultado, monto_apostado) VALUES (?, ?, ?, ?)',
+                     (g.user['id'], 'blackjack', result_info['result'], game.get('bet', 0)))
+        conn.commit()
+        new_bal = conn.execute('SELECT saldo FROM users WHERE id = ?', (g.user['id'],)).fetchone()['saldo']
+        session['blackjack_game'] = game
+        session.modified = True
+        return jsonify({'ok': True, 'game_over': True, 'player_hand': game['player_hand'],
+                        'dealer_hand': result_info['dealer_hand'], 'player_score': result_info['player_score'],
+                        'dealer_score': result_info['dealer_score'], 'result': result_info['result'], 'saldo': new_bal})
+
+    # actualizar session y devolver estado parcial
+    session['blackjack_game'] = game
+    session.modified = True
+    return jsonify({'ok': True, 'game_over': False, 'hand': game['player_hand'], 'score': player_score})
+
+
+@app.route('/api/blackjack/stand', methods=['POST'])
+def blackjack_stand():
+    if not g.user or 'blackjack_game' not in session:
+        return jsonify({'ok': False, 'msg': 'Juego no encontrado'}), 400
+
+    game = session['blackjack_game']
+    if game.get('game_over'):
+        return jsonify({'ok': False, 'msg': 'La ronda ya terminó.'}), 400
+
+    # finalizar juego
+    result_info, payout = _finalize_blackjack_game(game)
+    game['game_over'] = True
+    session['blackjack_game'] = game
+    session.modified = True
+
+    # aplicar payout y guardar historial
+    conn = get_db_connection()
+    conn.execute('UPDATE users SET saldo = saldo + ? WHERE id = ?', (payout, g.user['id']))
+    conn.execute('INSERT INTO game_history (user_id, juego, resultado, monto_apostado) VALUES (?, ?, ?, ?)',
+                 (g.user['id'], 'blackjack', result_info['result'], game.get('bet', 0)))
+    conn.commit()
+    new_bal = conn.execute('SELECT saldo FROM users WHERE id = ?', (g.user['id'],)).fetchone()['saldo']
+
+    return jsonify({'ok': True, 'game_over': True, 'player_hand': game['player_hand'],
+                    'dealer_hand': result_info['dealer_hand'], 'player_score': result_info['player_score'],
+                    'dealer_score': result_info['dealer_score'], 'result': result_info['result'], 'saldo': new_bal})
+
+
+if __name__ == '__main__':
+    app.run(port=8080, debug=True)

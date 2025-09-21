@@ -1,0 +1,4 @@
+Flask>=3.0
+Werkzeug>=2.0
+pyngrok>=5.0
+Pillow>=10.0

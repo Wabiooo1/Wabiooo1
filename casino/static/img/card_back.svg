@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 350">
+  <defs>
+    <!-- Gradiente dorado -->
+    <linearGradient id="goldBorder" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffeb99"/>
+      <stop offset="40%" stop-color="#ffd24d"/>
+      <stop offset="100%" stop-color="#b38600"/>
+    </linearGradient>
+
+    <!-- Fondo oscuro -->
+    <linearGradient id="darkBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#000"/>
+    </linearGradient>
+
+    <!-- Patrón geométrico -->
+    <pattern id="diamondPattern" patternUnits="userSpaceOnUse" width="20" height="20">
+      <rect width="20" height="20" fill="url(#darkBg)"/>
+      <path d="M10 0 L20 10 L10 20 L0 10 Z" fill="#333"/>
+    </pattern>
+
+    <!-- Sombra -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Marco dorado -->
+  <rect x="5" y="5" width="240" height="340" rx="20" fill="url(#goldBorder)" stroke="#7a5a00" stroke-width="3" filter="url(#shadow)"/>
+
+  <!-- Fondo interno con patrón -->
+  <rect x="15" y="15" width="220" height="320" rx="14" fill="url(#diamondPattern)"/>
+
+  <!-- Detalle central: símbolos combinados -->
+  <g transform="translate(125,175) scale(2)">
+    <!-- Corazón -->
+    <path d="M0 -10 C-8 -20 -20 -10 0 10 C20 -10 8 -20 0 -10Z" fill="url(#goldBorder)"/>
+    <!-- Pica encima -->
+    <path d="M0 -25 C-10 -15 -20 -25 0 -45 C20 -25 10 -15 0 -25Z" fill="url(#goldBorder)"/>
+    <!-- Trébol -->
+    <circle cx="-10" cy="0" r="6" fill="url(#goldBorder)"/>
+    <circle cx="10" cy="0" r="6" fill="url(#goldBorder)"/>
+    <circle cx="0" cy="-10" r="6" fill="url(#goldBorder)"/>
+    <!-- Diamante -->
+    <path d="M0 15 L8 25 L0 35 L-8 25 Z" fill="url(#goldBorder)"/>
+  </g>
+</svg>

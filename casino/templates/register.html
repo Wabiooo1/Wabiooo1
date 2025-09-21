@@ -1,0 +1,232 @@
+{% extends 'layout.html' %}
+
+{% block title %}Registro - Casino Gold{% endblock %}
+
+{% block body_class %}auth-page register-page{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <!-- Decorative Elements -->
+  <div class="auth-bg-elements">
+    <div class="floating-card card1">♠</div>
+    <div class="floating-card card2">♥</div>
+    <div class="floating-card card3">♦</div>
+    <div class="floating-card card4">♣</div>
+    <div class="floating-chip chip1"></div>
+    <div class="floating-chip chip2"></div>
+    <div class="floating-chip chip3"></div>
+  </div>
+
+  <div class="auth-container">
+    <!-- Left Side - Welcome Message -->
+    <div class="auth-brand">
+      <div class="brand-content">
+        <div class="brand-logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#d4af37" stroke-width="3"/>
+              <circle cx="50" cy="50" r="35" fill="none" stroke="#d4af37" stroke-width="2"/>
+              <text x="50" y="45" text-anchor="middle" fill="#d4af37" font-size="12" font-weight="bold">CASINO</text>
+              <text x="50" y="60" text-anchor="middle" fill="#d4af37" font-size="12" font-weight="bold">GOLD</text>
+            </svg>
+          </div>
+          <h1>¡Únete a Casino Gold!</h1>
+          <p class="brand-tagline">Crea tu cuenta y recibe $100 de bono de bienvenida</p>
+        </div>
+
+        <div class="welcome-benefits">
+          <div class="benefit-item">
+            <div class="benefit-icon">💰</div>
+            <div class="benefit-text">
+              <h3>$100 Gratis</h3>
+              <p>Bono de bienvenida al registrarte</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">🎁</div>
+            <div class="benefit-text">
+              <h3>Sin Depósito</h3>
+              <p>Comienza a jugar inmediatamente</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">🏆</div>
+            <div class="benefit-text">
+              <h3>Juegos Premium</h3>
+              <p>Acceso completo a todos los juegos</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="trust-indicators">
+          <div class="trust-item">
+            <span class="trust-icon">🔐</span>
+            <span>Encriptado SSL</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-icon">✅</span>
+            <span>Verificado</span>
+          </div>
+          <div class="trust-item">
+            <span class="trust-icon">🛡️</span>
+            <span>Datos Seguros</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Registration Form -->
+    <div class="auth-form-section">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h2>Crear Cuenta</h2>
+          <p>Completa la información para comenzar tu aventura</p>
+        </div>
+
+        <form method="post" class="auth-form">
+          <div class="form-group">
+            <label for="username">
+              <span class="label-icon">👤</span>
+              Nombre de Usuario
+            </label>
+            <div class="input-wrapper">
+              <input 
+                id="username" 
+                name="username" 
+                type="text"
+                required
+                minlength="3"
+                maxlength="20"
+                pattern="[a-zA-Z0-9_]+"
+                autocomplete="username"
+                placeholder="Elige tu nombre de usuario"
+              >
+              <div class="input-focus-border"></div>
+            </div>
+            <small class="input-hint">Solo letras, números y guiones bajos</small>
+          </div>
+
+          <div class="form-group">
+            <label for="email">
+              <span class="label-icon">📧</span>
+              Correo Electrónico
+            </label>
+            <div class="input-wrapper">
+              <input 
+                id="email" 
+                name="email" 
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="tu@email.com"
+              >
+              <div class="input-focus-border"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">
+              <span class="label-icon">🔒</span>
+              Contraseña
+            </label>
+            <div class="input-wrapper">
+              <input 
+                id="password" 
+                name="password" 
+                type="password"
+                required
+                minlength="6"
+                autocomplete="new-password"
+                placeholder="Crea una contraseña segura"
+              >
+              <button type="button" class="password-toggle" onclick="togglePassword()">
+                <span class="toggle-icon">👁️</span>
+              </button>
+              <div class="input-focus-border"></div>
+            </div>
+            <div class="password-strength" id="password-strength">
+              <div class="strength-bar">
+                <div class="strength-fill"></div>
+              </div>
+              <span class="strength-text">Seguridad: Débil</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-wrapper terms-checkbox">
+              <input type="checkbox" name="accept_terms" required>
+              <span class="checkmark"></span>
+              <span class="checkbox-text">
+                Acepto los <a href="#" class="terms-link">Términos y Condiciones</a> 
+                y la <a href="#" class="terms-link">Política de Privacidad</a>
+              </span>
+            </label>
+          </div>
+
+          <button type="submit" class="auth-btn primary">
+            <span class="btn-text">Crear Mi Cuenta</span>
+            <span class="btn-icon">🎉</span>
+          </button>
+        </form>
+
+        <div class="bonus-reminder">
+          <div class="bonus-badge">
+            <span class="bonus-amount">$100</span>
+            <span class="bonus-text">Bonus de Bienvenida</span>
+          </div>
+        </div>
+
+        <div class="auth-switch">
+          ¿Ya tienes una cuenta? 
+          <a href="{{ url_for('login') }}" class="switch-link">Inicia sesión aquí</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function togglePassword() {
+  const passwordInput = document.getElementById('password');
+  const toggleIcon = document.querySelector('.toggle-icon');
+  
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    toggleIcon.textContent = '🙈';
+  } else {
+    passwordInput.type = 'password';
+    toggleIcon.textContent = '👁️';
+  }
+}
+
+// Password strength indicator
+document.getElementById('password').addEventListener('input', function(e) {
+  const password = e.target.value;
+  const strengthBar = document.querySelector('.strength-fill');
+  const strengthText = document.querySelector('.strength-text');
+  
+  let strength = 0;
+  let text = 'Muy débil';
+  
+  if (password.length >= 6) strength += 20;
+  if (password.match(/[a-z]/)) strength += 20;
+  if (password.match(/[A-Z]/)) strength += 20;
+  if (password.match(/[0-9]/)) strength += 20;
+  if (password.match(/[^a-zA-Z0-9]/)) strength += 20;
+  
+  if (strength >= 80) text = 'Muy fuerte';
+  else if (strength >= 60) text = 'Fuerte';
+  else if (strength >= 40) text = 'Moderada';
+  else if (strength >= 20) text = 'Débil';
+  
+  strengthBar.style.width = strength + '%';
+  strengthText.textContent = 'Seguridad: ' + text;
+  
+  strengthBar.className = 'strength-fill';
+  if (strength >= 80) strengthBar.classList.add('very-strong');
+  else if (strength >= 60) strengthBar.classList.add('strong');
+  else if (strength >= 40) strengthBar.classList.add('medium');
+  else if (strength >= 20) strengthBar.classList.add('weak');
+});
+</script>
+{% endblock %}

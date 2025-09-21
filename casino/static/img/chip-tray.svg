@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <defs>
+    <!-- Gradiente dorado premium -->
+    <linearGradient id="goldGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffeb99"/>
+      <stop offset="40%" stop-color="#ffd24d"/>
+      <stop offset="100%" stop-color="#b38600"/>
+    </linearGradient>
+
+    <!-- Gradiente de sombra -->
+    <linearGradient id="darkGoldGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a67c00"/>
+      <stop offset="100%" stop-color="#4d3900"/>
+    </linearGradient>
+
+    <!-- Brillo de ficha -->
+    <radialGradient id="chipShine" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </radialGradient>
+
+    <!-- Filtro de sombra -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Bandeja -->
+  <rect x="0" y="0" width="200" height="60" rx="8" fill="url(#goldGradient)" stroke="#7a5a00" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- Fichas -->
+  <g transform="translate(15,8)">
+    <!-- Verde esmeralda -->
+    <ellipse cx="20" cy="25" rx="18" ry="8" fill="#004d26" filter="url(#shadow)"/>
+    <ellipse cx="20" cy="23" rx="18" ry="8" fill="#006633"/>
+    <ellipse cx="20" cy="21" rx="18" ry="8" fill="#00994d"/>
+    <ellipse cx="20" cy="21" rx="18" ry="8" fill="url(#chipShine)"/>
+  </g>
+
+  <g transform="translate(55,8)">
+    <!-- Rojo burdeos -->
+    <ellipse cx="20" cy="25" rx="18" ry="8" fill="#660000" filter="url(#shadow)"/>
+    <ellipse cx="20" cy="23" rx="18" ry="8" fill="#800000"/>
+    <ellipse cx="20" cy="21" rx="18" ry="8" fill="#b30000"/>
+    <ellipse cx="20" cy="21" rx="18" ry="8" fill="url(#chipShine)"/>
+  </g>
+
+  <g transform="translate(95,8)">
+    <!-- Negro con detalles dorados -->
+    <ellipse cx="20" cy="25" rx="18" ry="8" fill="#1a1a1a" filter="url(#shadow)"/>
+    <ellipse cx="20" cy="23" rx="18" ry="8" fill="#262626"/>
+    <ellipse cx="20" cy="21" rx="18" ry="8" fill="#333333"/>
+    <ellipse cx="20" cy="21" rx="18" ry="8" fill="url(#chipShine)"/>
+  </g>
+
+  <g transform="translate(135,8)">
+    <!-- Dorado -->
+    <ellipse cx="20" cy="25" rx="18" ry="8" fill="url(#darkGoldGradient)" filter="url(#shadow)"/>
+    <ellipse cx="20" cy="23" rx="18" ry="8" fill="url(#goldGradient)"/>
+    <ellipse cx="20" cy="21" rx="18" ry="8" fill="#ffe680"/>
+    <ellipse cx="20" cy="21" rx="18" ry="8" fill="url(#chipShine)"/>
+  </g>
+</svg>

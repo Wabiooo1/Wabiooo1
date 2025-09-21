@@ -1,0 +1,295 @@
+{% extends 'layout.html' %}
+
+{% block title %}Mi Perfil - Casino Gold{% endblock %}
+
+{% block body_class %}profile-page{% endblock %}
+
+{% block content %}
+<div class="profile-wrapper">
+  <!-- Hero Section -->
+  <div class="profile-hero">
+    <div class="hero-background">
+      <div class="hero-pattern"></div>
+    </div>
+    
+    <div class="profile-header">
+      <div class="avatar-section">
+        <div class="avatar-container">
+          <img src="{{ url_for('static', filename='img/avatar.svg') }}" class="avatar-large" alt="Avatar">
+          <div class="avatar-status online"></div>
+          <button class="avatar-edit-btn" onclick="changeAvatar()">
+            <span>📷</span>
+          </button>
+        </div>
+        
+        <div class="user-info">
+          <h1 class="username">{{ user['username'] }}</h1>
+          <p class="user-level">
+            <span class="level-badge">VIP</span>
+            Jugador Premium
+          </p>
+          <p class="member-since">
+            <span class="calendar-icon">📅</span>
+            Miembro desde {{ user['fecha_registro'].split(' ')[0] }}
+          </p>
+        </div>
+      </div>
+      
+      <div class="quick-actions">
+        <a href="/recargar" class="action-btn primary">
+          <span class="btn-icon">💰</span>
+          <span class="btn-text">Recargar Saldo</span>
+        </a>
+        <button class="action-btn secondary" onclick="shareProfile()">
+          <span class="btn-icon">📤</span>
+          <span class="btn-text">Compartir</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Stats -->
+  <div class="dashboard-container">
+    <div class="stats-grid">
+      <!-- Balance Card -->
+      <div class="stat-card balance-card">
+        <div class="card-header">
+          <h3>Balance Actual</h3>
+          <div class="card-icon balance-icon">💳</div>
+        </div>
+        <div class="card-content">
+          <div class="balance-amount">${{ '%.2f'|format(user['saldo']) }}</div>
+          <div class="balance-change positive">
+            <span class="change-icon">📈</span>
+            <span>+12.5% esta semana</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="/recargar" class="card-btn">Recargar</a>
+        </div>
+      </div>
+
+      <!-- Games Played Card -->
+      <div class="stat-card games-card">
+        <div class="card-header">
+          <h3>Partidas Jugadas</h3>
+          <div class="card-icon games-icon">🎮</div>
+        </div>
+        <div class="card-content">
+          <div class="stat-number">{{ stats.total_games }}</div>
+          <div class="stat-description">Total de partidas</div>
+        </div>
+      </div>
+
+      <!-- Favorite Game Card -->
+      <div class="stat-card favorite-card">
+        <div class="card-header">
+          <h3>Juego Favorito</h3>
+          <div class="card-icon favorite-icon">⭐</div>
+        </div>
+        <div class="card-content">
+          <div class="favorite-game">{{ stats.fav_game }}</div>
+          <div class="stat-description">Más jugado</div>
+        </div>
+      </div>
+
+      <!-- Achievement Card -->
+      <div class="stat-card achievement-card">
+        <div class="card-header">
+          <h3>Logros</h3>
+          <div class="card-icon achievement-icon">🏆</div>
+        </div>
+        <div class="card-content">
+          <div class="achievements-list">
+            <div class="achievement-item earned">
+              <span class="achievement-badge">🎯</span>
+              <span class="achievement-name">Primer Juego</span>
+            </div>
+            <div class="achievement-item earned">
+              <span class="achievement-badge">💎</span>
+              <span class="achievement-name">High Roller</span>
+            </div>
+            <div class="achievement-item locked">
+              <span class="achievement-badge">👑</span>
+              <span class="achievement-name">Rey del Casino</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Stats -->
+    <div class="game-stats-section">
+      <div class="section-header">
+        <h2>Estadísticas de Juegos</h2>
+        <div class="stats-period">
+          <button class="period-btn active">7d</button>
+          <button class="period-btn">30d</button>
+          <button class="period-btn">Todo</button>
+        </div>
+      </div>
+      
+      <div class="game-stats-grid">
+        <div class="game-stat-card">
+          <div class="game-stat-header">
+            <img src="{{ url_for('static', filename='img/gem.svg') }}" alt="Buscaminas" class="game-icon">
+            <h4>Buscaminas</h4>
+          </div>
+          <div class="game-stat-body">
+            <div class="stat-row">
+              <span>Partidas:</span>
+              <span class="stat-value">23</span>
+            </div>
+            <div class="stat-row">
+              <span>Victoria:</span>
+              <span class="stat-value win-rate">65%</span>
+            </div>
+            <div class="stat-row">
+              <span>Mejor:</span>
+              <span class="stat-value best">$45.60</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-stat-card">
+          <div class="game-stat-header">
+            <img src="{{ url_for('static', filename='img/chip.svg') }}" alt="Blackjack" class="game-icon">
+            <h4>Blackjack</h4>
+          </div>
+          <div class="game-stat-body">
+            <div class="stat-row">
+              <span>Partidas:</span>
+              <span class="stat-value">18</span>
+            </div>
+            <div class="stat-row">
+              <span>Victoria:</span>
+              <span class="stat-value win-rate">72%</span>
+            </div>
+            <div class="stat-row">
+              <span>Mejor:</span>
+              <span class="stat-value best">$120.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-stat-card">
+          <div class="game-stat-header">
+            <img src="{{ url_for('static', filename='img/roulette-wheel.svg') }}" alt="Ruleta" class="game-icon">
+            <h4>Ruleta</h4>
+          </div>
+          <div class="game-stat-body">
+            <div class="stat-row">
+              <span>Partidas:</span>
+              <span class="stat-value">12</span>
+            </div>
+            <div class="stat-row">
+              <span>Victoria:</span>
+              <span class="stat-value win-rate">42%</span>
+            </div>
+            <div class="stat-row">
+              <span>Mejor:</span>
+              <span class="stat-value best">$180.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent History -->
+    <div class="history-section">
+      <div class="section-header">
+        <h2>Historial Reciente</h2>
+        <button class="export-btn">
+          <span>📊</span>
+          Exportar
+        </button>
+      </div>
+      
+      <div class="history-table-container">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Juego</th>
+              <th>Resultado</th>
+              <th>Apuesta</th>
+              <th>Ganancia</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for h in history %}
+            <tr class="history-row">
+              <td class="game-cell">
+                <div class="game-info">
+                  {% if h['juego'] == 'buscaminas' %}
+                    <img src="{{ url_for('static', filename='img/gem.svg') }}" alt="Minas" class="game-mini-icon">
+                    <span>Buscaminas</span>
+                  {% elif h['juego'] == 'blackjack' %}
+                    <img src="{{ url_for('static', filename='img/chip.svg') }}" alt="Blackjack" class="game-mini-icon">
+                    <span>Blackjack</span>
+                  {% elif h['juego'] == 'roulette' %}
+                    <img src="{{ url_for('static', filename='img/roulette-wheel.svg') }}" alt="Ruleta" class="game-mini-icon">
+                    <span>Ruleta</span>
+                  {% else %}
+                    <span>{{ h['juego']|capitalize }}</span>
+                  {% endif %}
+                </div>
+              </td>
+              <td class="result-cell">{{ h['resultado'] }}</td>
+              <td class="bet-cell">${{ '%.2f'|format(h['monto_apostado']) }}</td>
+              <td class="profit-cell">
+                <span class="profit positive">+$12.50</span>
+              </td>
+              <td class="date-cell">{{ h['fecha'].split(' ')[0] }}</td>
+              <td class="status-cell">
+                <span class="status-badge completed">Completado</span>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="empty-state">
+                <div class="empty-content">
+                  <div class="empty-icon">🎲</div>
+                  <h4>¡Empieza a Jugar!</h4>
+                  <p>Aún no has jugado ninguna partida. ¡Es hora de comenzar!</p>
+                  <a href="/" class="start-playing-btn">Ir a Juegos</a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function changeAvatar() {
+  alert('Funcionalidad de cambio de avatar próximamente disponible');
+}
+
+function shareProfile() {
+  if (navigator.share) {
+    navigator.share({
+      title: 'Mi perfil en Casino Gold',
+      text: '¡Mira mi progreso en Casino Gold!',
+      url: window.location.href
+    });
+  } else {
+    navigator.clipboard.writeText(window.location.href);
+    alert('¡Enlace copiado al portapapeles!');
+  }
+}
+
+// Period buttons functionality
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    // Here you would typically fetch new data based on the period
+  });
+});
+</script>
+{% endblock %}
